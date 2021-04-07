@@ -19,6 +19,7 @@ Model::Model(size_t input_dim_width, size_t input_dim_height,
   _feature_probs =
       vector<vector<vector<vector<float>>>>();  // TODO: init this with 0s -
                                                 // ERROR would occur otherwise
+  InitializeFeatureProbs(); // initialize with default values
   _prior_probs = vector<float>(label_types.size(), 0.0f);  // init with 0s
   _label_types = label_types;
   _imgs = vector<Image>();  // init to empty vector
@@ -151,6 +152,7 @@ std::istream& operator>>(std::istream& is, Model& model) {
     }
     row++;
   }
+  return is;
 }
 void Model::SplitString(const string& str, const char delim,
                         vector<std::string>& out) {
@@ -160,6 +162,20 @@ void Model::SplitString(const string& str, const char delim,
   std::string s;
   while (std::getline(ss, s, delim)) {
     out.push_back(s);
+  }
+}
+void Model::InitializeFeatureProbs() {
+  for (size_t label_i = 0; label_i < _label_types.size(); label_i++) {
+    _feature_probs.emplace_back();
+    for (size_t row = 0; row < _input_dim_height; row++) {
+      _feature_probs[label_i].emplace_back();
+      for (size_t col = 0; col < _input_dim_width; col++) {
+        _feature_probs[label_i][row].emplace_back();
+        for (size_t pixel_shade = 0; pixel_shade < kPixelTypes.size(); pixel_shade++) {
+          _feature_probs[label_i][row][col].emplace_back();
+        }
+      }
+    }
   }
 }
 

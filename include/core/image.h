@@ -22,11 +22,10 @@ class Image {
    *                        image initialize to by default
    */
   Image(size_t height, size_t width, Pixel default_pixel = kWhite);
-  //  Image(std::vector<std::vector<Pixel>> image_vec); // TODO: change to pass
-  //  by ref void AddRow(std::vector<Pixel> row);
   size_t GetHeight();
   size_t GetWidth();
   const Pixel& GetPixel(size_t row, size_t column) const;
+  const std::vector<std::vector<Pixel>>& GetImageAsVector();
 
   /**
    * Set a new value to the pixel in the image at coordinates [row, column]

@@ -20,9 +20,15 @@ class Model {
    * @param laplace_smoothing_constant  laplace smoothing constant
    */
   Model(size_t input_dim_width, size_t input_dim_height,
-        std::vector<int> label_types,  // TODO: change this into a map LATER??
-        float laplace_smoothing_constant);  // TODO: make output... into an enum
-                                            // with [0, 0, 1, ...0] type
+        std::vector<int> label_types,
+        float laplace_smoothing_constant);
+
+  /**
+   * Train Naive Bayes Model on the training data provided. Calculate
+   * the feature and prior probabilities for the model.
+   * @param imgs    training images (inputs)
+   * @param labels  training labels (outputs)
+   */
   void Train(std::vector<Image> imgs, std::vector<int> labels);
 
   /**
@@ -68,6 +74,7 @@ class Model {
   void CalculatePriorProbabilities();
   void CalculateFeatureProbabilities();
   size_t GetCountForFeatures(int label, Pixel shade, size_t row, size_t column);
+  void InitializeFeatureProbs();
   /**
    * Method derived from
    * https://www.techiedelight.com/split-string-cpp-using-delimiter/

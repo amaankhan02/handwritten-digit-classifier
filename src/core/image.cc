@@ -38,6 +38,9 @@ bool Image::SetPixel(const Pixel &new_pixel, size_t row, size_t column) {
   }
   return false;
 }
+const std::vector<std::vector<Pixel>>& Image::GetImageAsVector() {
+  return _image;
+}
 //void Image::AddRow(std::vector<char> row) {
 //  // make sure 1 more row won't exceed the height limit
 //  if ()

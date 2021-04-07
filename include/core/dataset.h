@@ -18,13 +18,14 @@ class Dataset {
   Dataset(size_t input_height, size_t input_width); // TODO: make this automatic later --> automatically read from file
   friend std::istream &operator>>(std::istream &is, Dataset &dataset);
 
-  // TODO: add GetImages(), GetLabels(), etc
+  const Image& GetImage(size_t index);
+  int GetLabel(size_t index);
 
  private:
   size_t _input_height;
   size_t _input_width;
   std::vector<Image> _images;
-  std::vector<int> _labels; // TODO: should label be an enum?
+  std::vector<int> _labels;
 
   /**
    * Parses the char value into a Pixel.
