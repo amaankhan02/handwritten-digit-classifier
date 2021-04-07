@@ -181,7 +181,7 @@ const std::vector<std::vector<std::vector<std::vector<float>>>>&
     Model::GetFeatureProbabilities() {
   return _feature_probs;
 }
-const std::vector<int>& Model::GetPriorProbabilities() {
+const std::vector<float>& Model::GetPriorProbabilities() {
   return _prior_probs;
 }
 

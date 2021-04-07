@@ -56,7 +56,7 @@ class Model {
    */
   const std::vector<std::vector<std::vector<std::vector<float>>>>
       &GetFeatureProbabilities();
-  const std::vector<int> &GetPriorProbabilities();
+  const std::vector<float> &GetPriorProbabilities();
 
  private:
   const std::map<Pixel, size_t> kPixelTypes = {{kWhite, 0}, {kBlack, 1}};
