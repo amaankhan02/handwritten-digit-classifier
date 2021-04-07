@@ -13,9 +13,25 @@
 namespace naivebayes {
 namespace core {
 
+/**
+ * Class to store input and output vector of data for a machine learning model
+ */
 class Dataset {
  public:
-  Dataset(size_t input_height, size_t input_width); // TODO: make this automatic later --> automatically read from file
+  /**
+   * Initialize dataset with the input height and width that is required
+   * for each data
+   * @param input_height    input height
+   * @param input_width     input width
+   */
+  Dataset(size_t input_height, size_t input_width);
+
+  /**
+   * Load dataset from input stream
+   * @param is  input stream
+   * @param dataset     dataset object to load into
+   * @return    input stream
+   */
   friend std::istream &operator>>(std::istream &is, Dataset &dataset);
 
   const Image& GetImage(size_t index);

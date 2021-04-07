@@ -15,6 +15,7 @@ TEST_CASE("Test >> Operator with 3 images") {
   Dataset dataset = Dataset(3, 3);
   if (input_file.is_open()) {
     input_file >> dataset;
+    input_file.close();
   }
   Image img1 = dataset.GetImage(0);
   Image img2 = dataset.GetImage(1);
@@ -89,6 +90,7 @@ TEST_CASE(
   Dataset dataset = Dataset(5, 5);
   if (input_file.is_open()) {
     input_file >> dataset;
+    input_file.close();
   }
   Image img1 = dataset.GetImage(0);
 

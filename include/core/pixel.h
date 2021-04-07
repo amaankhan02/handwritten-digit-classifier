@@ -6,6 +6,9 @@
 #define NAIVE_BAYES_PIXEL_H
 namespace naivebayes {
 namespace core {
+/**
+ * Pixel values/shades for an image
+ */
 enum Pixel { kBlack = '#', kGray = '+', kWhite = ' ' };
 }
 }  // namespace naivebayes

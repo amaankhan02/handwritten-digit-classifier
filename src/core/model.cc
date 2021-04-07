@@ -17,8 +17,7 @@ Model::Model(size_t input_dim_width, size_t input_dim_height,
              vector<int> label_types, float laplace_smoothing_constant) {
   _laplace_smooth_constant = laplace_smoothing_constant;
   _feature_probs =
-      vector<vector<vector<vector<float>>>>();  // TODO: init this with 0s -
-                                                // ERROR would occur otherwise
+      vector<vector<vector<vector<float>>>>();
   InitializeFeatureProbs(); // initialize with default values
   _prior_probs = vector<float>(label_types.size(), 0.0f);  // init with 0s
   _label_types = label_types;
@@ -177,6 +176,13 @@ void Model::InitializeFeatureProbs() {
       }
     }
   }
+}
+const std::vector<std::vector<std::vector<std::vector<float>>>>&
+    Model::GetFeatureProbabilities() {
+  return _feature_probs;
+}
+const std::vector<int>& Model::GetPriorProbabilities() {
+  return _prior_probs;
 }
 
 }  // namespace core

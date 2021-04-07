@@ -22,6 +22,12 @@ class Image {
    *                        image initialize to by default
    */
   Image(size_t height, size_t width, Pixel default_pixel = kWhite);
+
+  /**
+   * Initialize image with existing vector of pixels
+   * @param image_vector    vector of pixels representing image
+   */
+  Image(std::vector<std::vector<Pixel>> &image_vector);
   size_t GetHeight();
   size_t GetWidth();
   const Pixel& GetPixel(size_t row, size_t column) const;
