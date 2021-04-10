@@ -34,6 +34,8 @@ class Model {
    */
   void Train(std::vector<Image> imgs, std::vector<int> labels);
 
+  float ComputeAccuracy(std::vector<Image> images, std::vector<int> correct_labels);
+
   /**
    * Given an image, model predicts/classifies what the output
    * should be by finding the likelihood scores and returning the
@@ -43,8 +45,6 @@ class Model {
    * @return            A predicted label of the image
    */
   int Predict(Image input_img);
-
-  float ComputeAccuracy(std::vector<Image> images, std::vector<int> correct_labels);
 
   /**
    * Save model probabilities to stream

@@ -45,8 +45,8 @@ void Model::Train(std::vector<Image> imgs, std::vector<int> labels) {
   _imgs = imgs;
   _labels = labels;
 
-  CalculateFeatureProbabilities();
   CalculatePriorProbabilities();
+  CalculateFeatureProbabilities();
 }
 
 int Model::Predict(Image input_img) {
