@@ -9,7 +9,11 @@ namespace core {
 /**
  * Pixel values/shades for an image
  */
-enum Pixel { kBlack = '#', kGray = '+', kWhite = ' ' };
+enum Pixel {
+  kBlack = '#',
+  kGray = '+',
+  kWhite = ' '
+};
 }
 }  // namespace naivebayes
 #endif  // NAIVE_BAYES_PIXEL_H

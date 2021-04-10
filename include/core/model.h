@@ -35,6 +35,18 @@ class Model {
   void Train(std::vector<Image> imgs, std::vector<int> labels);
 
   /**
+   * Given an image, model predicts/classifies what the output
+   * should be by finding the likelihood scores and returning the
+   * most probable label.
+   *
+   * @param input_img   Image to classify/predict on
+   * @return            A predicted label of the image
+   */
+  int Predict(Image input_img);
+
+  float ComputeAccuracy(std::vector<Image> images, std::vector<int> correct_labels);
+
+  /**
    * Save model probabilities to stream
    * @param os output stream
    * @param model model
@@ -56,6 +68,7 @@ class Model {
    */
   const std::vector<std::vector<std::vector<std::vector<float>>>>
       &GetFeatureProbabilities();
+
   const std::vector<float> &GetPriorProbabilities();
 
  private:
@@ -93,7 +106,7 @@ class Model {
   void InitializeFeatureProbs();
 
   /**
-   * Split string off delimeter into vector of strings
+   * Split string off delimiter into vector of strings
    * Method derived from
    * https://www.techiedelight.com/split-string-cpp-using-delimiter/
    * @param str
@@ -102,6 +115,7 @@ class Model {
    */
   void SplitString(const std::string &str, const char delim,
                    std::vector<std::string> &out);
+  int GetMaxIndex(std::vector<float> vec);
 };
 }  // namespace core
 }  // namespace naivebayes

@@ -37,6 +37,9 @@ class Dataset {
   const Image& GetImage(size_t index);
   int GetLabel(size_t index);
 
+  const std::vector<Image>& GetImages();
+  const std::vector<int>& GetLabels();
+
  private:
   size_t _input_height;
   size_t _input_width;

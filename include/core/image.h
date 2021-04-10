@@ -28,6 +28,7 @@ class Image {
    * @param image_vector    vector of pixels representing image
    */
   Image(std::vector<std::vector<Pixel>> &image_vector);
+
   size_t GetHeight();
   size_t GetWidth();
   const Pixel& GetPixel(size_t row, size_t column) const;
@@ -47,6 +48,7 @@ class Image {
   std::vector<std::vector<Pixel>> _image;
   size_t _height;
   size_t _width;
+
 };
 }  // namespace core
 
