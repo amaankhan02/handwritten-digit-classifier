@@ -17,32 +17,29 @@ namespace core {
 Model::Model(size_t input_dim_width, size_t input_dim_height,
              vector<int> label_types, float laplace_smoothing_constant) {
   _laplace_smooth_constant = laplace_smoothing_constant;
-  _feature_probs = vector<vector<vector<vector<float>>>>();
-  InitializeFeatureProbs();  // initialize with default values
-  _prior_probs = vector<float>(label_types.size(), 0.0f);  // init with 0s
-  _label_types = label_types;
-  _imgs = vector<Image>();  // init to empty vector
   _labels = vector<int>();  // init to empty vector
+  _label_types = label_types;
+  _prior_probs = vector<float>(label_types.size(), 0.0f);  // init with 0s
+  _imgs = vector<Image>();  // init to empty vector
   _input_dim_width = input_dim_width;
   _input_dim_height = input_dim_height;
+  _feature_probs = vector<vector<vector<vector<float>>>>();
+  InitializeFeatureProbs();  // initialize with default values
 }
 
 void Model::CalculatePriorProbabilities() {
   for (int label_type : _label_types) {
-    float numerator =
-        _laplace_smooth_constant +
-        std::count(_labels.begin(), _labels.end(), label_type) / _labels.size();
-    float denominator =
-        _label_types.size() * _laplace_smooth_constant + _labels.size();
+    float numerator = _laplace_smooth_constant + std::count(_labels.begin(), _labels.end(), label_type);
+    float denominator = _label_types.size() * _laplace_smooth_constant + _labels.size();
     _prior_probs[label_type] = numerator / denominator;
   }
 }
 
-void Model::Train(std::vector<Image> imgs, std::vector<int> labels) {
-  if (imgs.size() != labels.size()) {
+void Model::Train(std::vector<Image> images, std::vector<int> labels) {
+  if (images.size() != labels.size()) {
     throw std::invalid_argument("Invalid data: sizes do not match");
   }
-  _imgs = imgs;
+  _imgs = images;
   _labels = labels;
 
   CalculatePriorProbabilities();
@@ -100,8 +97,7 @@ void Model::CalculateFeatureProbabilities() {
               num_shades * _laplace_smooth_constant +
               std::count(_labels.begin(), _labels.end(), label_type);
 
-          _feature_probs[label_type][row][column][pixel_index] =
-              numerator / denominator;
+          _feature_probs[label_type][row][column][pixel_index] = (numerator / denominator);
         }
       }
     }

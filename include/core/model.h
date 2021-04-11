@@ -25,16 +25,29 @@ class Model {
    */
   Model(size_t input_dim_width, size_t input_dim_height,
         std::vector<int> label_types, float laplace_smoothing_constant);
+  // TODO: if you get time, make label_types a MAP, cuz using vec<int> is NOT good method
 
   /**
    * Train Naive Bayes Model on the training data provided. Calculate
    * the feature and prior probabilities for the model.
-   * @param imgs    training images (inputs)
+   * @param images  training images (inputs)
    * @param labels  training labels (outputs)
    */
-  void Train(std::vector<Image> imgs, std::vector<int> labels);
+  void Train(std::vector<Image> images, std::vector<int> labels);
 
-  float ComputeAccuracy(std::vector<Image> images, std::vector<int> correct_labels);
+  /**
+   * Model predicts on all the images passed in and computes the accuracy by
+   * calculating the ratio of the number of correct predictions over the
+   * number of total predictions.
+   *
+   * @param images          vector of images to predict on and compute accuracy
+   *                        of
+   * @param correct_labels  the correct labels corresponding to the the vector
+   *                        of input images
+   * @return
+   */
+  float ComputeAccuracy(std::vector<Image> images,
+                        std::vector<int> correct_labels);
 
   /**
    * Given an image, model predicts/classifies what the output
