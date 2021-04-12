@@ -25,7 +25,13 @@ class Model {
    */
   Model(size_t input_dim_width, size_t input_dim_height,
         std::vector<int> label_types, float laplace_smoothing_constant);
-  // TODO: if you get time, make label_types a MAP, cuz using vec<int> is NOT good method
+
+  /**
+   * Initialize Model from an input stream that has the model features and probabilities
+   * @param input_stream_of_model_probs     input stream with model information
+   */
+  Model(std::istream input_stream_of_model_probs,size_t input_dim_width, size_t input_dim_height,
+        std::vector<int> label_types);
 
   /**
    * Train Naive Bayes Model on the training data provided. Calculate
@@ -117,6 +123,7 @@ class Model {
   void CalculateFeatureProbabilities();
   size_t GetCountForFeatures(int label, Pixel shade, size_t row, size_t column);
   void InitializeFeatureProbs();
+  void InitializePriorProbs();
 
   /**
    * Split string off delimiter into vector of strings

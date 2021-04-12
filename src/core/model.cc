@@ -19,12 +19,19 @@ Model::Model(size_t input_dim_width, size_t input_dim_height,
   _laplace_smooth_constant = laplace_smoothing_constant;
   _labels = vector<int>();  // init to empty vector
   _label_types = label_types;
-  _prior_probs = vector<float>(label_types.size(), 0.0f);  // init with 0s
   _imgs = vector<Image>();  // init to empty vector
   _input_dim_width = input_dim_width;
   _input_dim_height = input_dim_height;
-  _feature_probs = vector<vector<vector<vector<float>>>>();
-  InitializeFeatureProbs();  // initialize with default values
+
+  InitializePriorProbs();
+  InitializeFeatureProbs();
+  // TODO: figure this out
+//  if (_prior_probs.empty()) {
+//    InitializePriorProbs();
+//  }
+//  if (_feature_probs.empty()) {
+//    InitializeFeatureProbs();  // initialize with default values
+//  }
 }
 
 void Model::CalculatePriorProbabilities() {
@@ -104,6 +111,7 @@ void Model::CalculateFeatureProbabilities() {
   }
 }
 
+// save model
 std::ostream& operator<<(std::ostream& os, const Model& model) {
   // store prior probabilties
   for (auto prob : model._prior_probs) {
@@ -136,17 +144,20 @@ std::ostream& operator<<(std::ostream& os, const Model& model) {
   return os;
 }
 
+// load model
 std::istream& operator>>(std::istream& is, Model& model) {
   string line;
   // read prior probabilities
+  size_t prior_prob_index = 0;
   while (std::getline(is, line)) {
     if (line.length() == 1 && line[0] == model.kPriorAndFeatureProbDelimiter) {
       break;
     }
-    model._prior_probs.push_back(std::stof(line));
+    model._prior_probs[prior_prob_index] = std::stof(line);
+    prior_prob_index++;
   }
 
-  // read feature probabilties
+  // read feature probabilities
   size_t label_type = 0;
   size_t row = 0;
   while (std::getline(is, line)) {
@@ -191,6 +202,9 @@ void Model::SplitString(const string& str, const char delim,
 }
 
 void Model::InitializeFeatureProbs() {
+  _feature_probs = vector<vector<vector<vector<float>>>>();
+
+  // resize 4d vector to correct dimensions
   for (size_t label_i = 0; label_i < _label_types.size(); label_i++) {
     _feature_probs.emplace_back();
     for (size_t row = 0; row < _input_dim_height; row++) {
@@ -237,6 +251,12 @@ float Model::ComputeAccuracy(std::vector<Image> images,
   }
 
   return static_cast<float>(num_correct) / images.size();
+}
+Model::Model(std::istream input_stream_of_model_probs, size_t input_dim_width,
+             size_t input_dim_height, std::vector<int> label_types) {
+}
+void Model::InitializePriorProbs() {
+  _prior_probs = vector<float>(_label_types.size(), 0.0f);  // init with 0s
 }
 
 }  // namespace core

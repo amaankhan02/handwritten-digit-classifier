@@ -15,6 +15,7 @@ Image::Image(size_t height, size_t width, Pixel default_pixel) {
   _height = height;
   _width = width;
   _image = vector<vector<Pixel>>(height);
+  default_pixel_ = default_pixel;
 
   // construct a blank image with all default pixels
   for (size_t row = 0; row < height; row++) {
@@ -24,10 +25,11 @@ Image::Image(size_t height, size_t width, Pixel default_pixel) {
   }
 }
 
-Image::Image(std::vector<std::vector<Pixel>>& image_vector) {
+Image::Image(std::vector<std::vector<Pixel>>& image_vector, Pixel default_pixel) {
   _image = image_vector;
   _height = _image.size();
   _width = _image[0].size();
+  default_pixel_ = default_pixel;
 }
 
 size_t Image::GetHeight() {
@@ -48,6 +50,13 @@ bool Image::SetPixel(const Pixel& new_pixel, size_t row, size_t column) {
 }
 const std::vector<std::vector<Pixel>>& Image::GetImageAsVector() {
   return _image;
+}
+void Image::Clear() {
+  for (size_t row = 0; row < _height; row++) {
+    for (size_t column = 0; column < _width; column++) {
+      _image[row][column] = default_pixel_;
+    }
+  }
 }
 
 }  // namespace core
