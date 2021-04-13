@@ -10,6 +10,11 @@ using std::string;
 namespace naivebayes {
 namespace core {
 
+Dataset::Dataset(size_t input_height, size_t input_width) {
+  _input_height = input_height;
+  _input_width = input_width;
+}
+
 Pixel Dataset::ParsePixel(char value) {
   if (value == kWhite) {
     return kWhite;
@@ -19,6 +24,7 @@ Pixel Dataset::ParsePixel(char value) {
     throw std::invalid_argument("Invalid pixel");
   }
 }
+
 std::istream& operator>>(std::istream& is, Dataset& dataset) {
   string line;
   size_t img_row = 0;
@@ -28,16 +34,8 @@ std::istream& operator>>(std::istream& is, Dataset& dataset) {
       dataset._labels.push_back(std::stoi(line));
       Image temp_img = Image(dataset._input_height, dataset._input_width);
       dataset._images.push_back(temp_img);
-
-//      // check that the num rows is same as height that was provided TODO: fix this implementation later! --> and the one on line 38
-//      if (!dataset._labels.empty() && img_row != dataset._input_height - 1) {
-//        throw std::invalid_argument("Invalid image size provided");
-//      }
       img_row = 0;
     } else {
-//      if (line.length() != dataset._input_width - 1) {
-//        throw std::invalid_argument("Invalid image size provided");
-//      }
       for (size_t column = 0; column < line.length(); column++) {
         Pixel pixel = dataset.ParsePixel(line.at(column));
         dataset._images.back().SetPixel(pixel, img_row, column);
@@ -48,10 +46,7 @@ std::istream& operator>>(std::istream& is, Dataset& dataset) {
 
   return is;
 }
-Dataset::Dataset(size_t input_height, size_t input_width) {
-  _input_height = input_height;
-  _input_width = input_width;
-}
+
 const Image& Dataset::GetImage(size_t index) {
   return _images[index];
 }
