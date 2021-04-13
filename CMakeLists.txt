@@ -51,12 +51,12 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
 list(APPEND CORE_SOURCE_FILES   src/core/image.cc
                                 src/core/model.cc
-                                src/core/dataset.cc)
+                                src/core/dataset.cc
+                                src/utility/train_utility.cc)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
                             src/visualizer/naive_bayes_app.cc
-                            src/visualizer/sketchpad.cc
-                            )
+                            src/visualizer/sketchpad.cc)
 
 list(APPEND TEST_FILES      tests/test_dataset.cc
                             tests/test_model.cc)
