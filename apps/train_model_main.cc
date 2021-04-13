@@ -1,20 +1,12 @@
 #include <core/model.h>
-
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <tuple>
+#include <utility/train_utility.h>
 
 using naivebayes::core::Dataset;
 using naivebayes::core::Model;
+using naivebayes::utility::LoadData;
+using naivebayes::utility::PrintLine;
+using naivebayes::utility::SaveModel;
 
-// TODO: should these be in a separate file?
-void LoadData(Dataset& dataset, const std::string& file_path);
-void SaveModel(Model& model, const std::string& output_file_path);
-void PrintLine(const std::string& msg);
-void PrintLine(const std::string& msg, float value);
-
-// TODO: is it fine to define these values outside the method
 const auto train_data_path = "../data/trainingimagesandlabels.txt";
 const auto test_data_path = "../data/testimagesandlabels.txt";
 const auto model_save_file = "../data/modelsave.txt";
@@ -32,10 +24,8 @@ int main() {
   LoadData(train_dataset, train_data_path);
   LoadData(test_dataset, test_data_path);
 
-  PrintLine("Training Model...");
+  PrintLine("Training & Saving Model...");
   model.Train(train_dataset.GetImages(), train_dataset.GetLabels());
-
-  PrintLine("Saving Model...");
   SaveModel(model, model_save_file);
 
   PrintLine("Computing Accuracies...");
@@ -49,26 +39,4 @@ int main() {
   PrintLine("Training Accuracy: ", train_accuracy);
 
   return 0;
-}
-
-void LoadData(Dataset& dataset, const std::string& file_path) {
-  std::ifstream input_file(file_path);
-  if (input_file.is_open()) {
-    input_file >> dataset;
-  }
-}
-
-void SaveModel(Model& model, const std::string& output_file_path) {
-  std::ofstream output_file(output_file_path);
-  if (output_file.is_open()) {
-    output_file << model;
-  }
-}
-
-void PrintLine(const std::string& msg) {
-  std::cout << msg << std::endl;
-}
-
-void PrintLine(const std::string& msg, float value) {
-  std::cout << msg << value << std::endl;
 }
