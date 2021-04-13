@@ -23,8 +23,8 @@ Model::Model(size_t input_dim_width, size_t input_dim_height,
   _input_dim_width = input_dim_width;
   _input_dim_height = input_dim_height;
 
-  InitializePriorProbs();
-  InitializeFeatureProbs();
+  InitializePriorProbilities();
+  InitializeFeatureProbabilities();
 }
 
 void Model::Train(std::vector<Image> images, std::vector<int> labels) {
@@ -88,7 +88,7 @@ std::ostream& operator<<(std::ostream& os, const Model& model) {
     os << prob << std::endl;
   }
 
-  os << model.kPriorAndFeatureProbDelimiter << std::endl;
+  os << model.kPriorAndFeatureProbDelimiter << std::endl;;
 
   // store feature probabilities
   for (auto label : model._label_types) {
@@ -117,46 +117,8 @@ std::ostream& operator<<(std::ostream& os, const Model& model) {
 // load model
 std::istream& operator>>(std::istream& is, Model& model) {
   string line;
-  // read prior probabilities
-  size_t prior_prob_index = 0;
-  while (std::getline(is, line)) {
-    if (line.length() == 1 && line[0] == model.kPriorAndFeatureProbDelimiter) {
-      break;
-    }
-    model._prior_probs[prior_prob_index] = std::stof(line);
-    prior_prob_index++;
-  }
-
-  // read feature probabilities
-  size_t label_type = 0;
-  size_t row = 0;
-  while (std::getline(is, line)) {
-    if (line[0] == model.kLabelFeatureMapDelimiter) {
-      label_type++;
-      row = 0;
-      continue;
-    }
-
-    vector<string> pixels = vector<string>();
-    model.SplitString(line, model.kPixelDelimiter, pixels);
-
-    size_t column = 0;
-    for (string pixel : pixels) {
-      vector<string> shade_probabilities = vector<string>();
-      model.SplitString(pixel, model.kPixelTypeProbDelimiter,
-                        shade_probabilities);
-
-      size_t pixel_shade_i = 0;
-      for (string prob_string : shade_probabilities) {
-        float prob_float = std::stof(prob_string);
-        model._feature_probs[label_type][row][column][pixel_shade_i] =
-            prob_float;
-        pixel_shade_i++;
-      }
-      column++;
-    }
-    row++;
-  }
+  model.LoadPriorProbilities(is, model, line);
+  model.LoadFeatureProbilities(is, model, line);
   return is;
 }
 
@@ -219,7 +181,7 @@ void Model::SplitString(const string& str, const char delim,
   }
 }
 
-void Model::InitializeFeatureProbs() {
+void Model::InitializeFeatureProbabilities() {
   _feature_probs = vector<vector<vector<vector<float>>>>();
 
   // resize 4d vector to correct dimensions
@@ -258,8 +220,53 @@ int Model::GetMaxIndex(std::vector<float> vec) {
   return max_index;
 }
 
-void Model::InitializePriorProbs() {
+void Model::InitializePriorProbilities() {
   _prior_probs = vector<float>(_label_types.size(), 0.0f);  // init with 0s
+}
+void Model::SavePriorProbilities(std::ostream& output_stream) {
+
+}
+void Model::LoadPriorProbilities(std::istream& in_stream, Model& model, std::string& line) {
+  size_t prior_prob_index = 0;
+  while (std::getline(in_stream, line)) {
+    if (line.length() == 1 && line[0] == model.kPriorAndFeatureProbDelimiter) {
+      break;
+    }
+    model._prior_probs[prior_prob_index] = std::stof(line);
+    prior_prob_index++;
+  }
+}
+void Model::LoadFeatureProbilities(std::istream& in_stream, Model& model,
+                                   string& line) {
+  size_t label_type = 0;
+  size_t row = 0;
+  while (std::getline(in_stream, line)) {
+    if (line[0] == model.kLabelFeatureMapDelimiter) {
+      label_type++;
+      row = 0;
+      continue;
+    }
+
+    vector<string> pixels = vector<string>();
+    model.SplitString(line, model.kPixelDelimiter, pixels);
+
+    size_t column = 0;
+    for (string pixel : pixels) {
+      vector<string> shade_probabilities = vector<string>();
+      model.SplitString(pixel, model.kPixelTypeProbDelimiter,
+                        shade_probabilities);
+
+      size_t pixel_shade_i = 0;
+      for (string prob_string : shade_probabilities) {
+        float prob_float = std::stof(prob_string);
+        model._feature_probs[label_type][row][column][pixel_shade_i] =
+            prob_float;
+        pixel_shade_i++;
+      }
+      column++;
+    }
+    row++;
+  }
 }
 
 }  // namespace core

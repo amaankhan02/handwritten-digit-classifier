@@ -26,8 +26,6 @@ class Model {
   Model(size_t input_dim_width, size_t input_dim_height,
         std::vector<int> label_types, float laplace_smoothing_constant);
 
-
-
   /**
    * Train Naive Bayes Model on the training data provided. Calculate
    * the feature and prior probabilities for the model.
@@ -67,6 +65,7 @@ class Model {
    * @return ostream
    */
   friend std::ostream &operator<<(std::ostream &os, const Model &model);
+
   /**
    * Load model probabibilites from file to Model object
    * @param is      input stream
@@ -78,11 +77,15 @@ class Model {
   /**
    * Get feature probabilities.
    * The vector dimensionality has [label_type, row, col, pixel_shade]
-   * @return
+   * @return    feature probabilities
    */
   const std::vector<std::vector<std::vector<std::vector<float>>>>
       &GetFeatureProbabilities();
 
+  /**
+   * Get prior probabilities
+   * @return prior probabiltiies
+   */
   const std::vector<float> &GetPriorProbabilities();
 
  private:
@@ -117,8 +120,11 @@ class Model {
   void CalculatePriorProbabilities();
   void CalculateFeatureProbabilities();
   size_t GetCountForFeatures(int label, Pixel shade, size_t row, size_t column);
-  void InitializeFeatureProbs();
-  void InitializePriorProbs();
+  void InitializeFeatureProbabilities();
+  void InitializePriorProbilities();
+  void LoadPriorProbilities(std::istream& in_stream, Model& model, std::string& line);
+  void LoadFeatureProbilities(std::istream& in_stream, Model& model, std::string& line);
+
 
   /**
    * Split string off delimiter into vector of strings
