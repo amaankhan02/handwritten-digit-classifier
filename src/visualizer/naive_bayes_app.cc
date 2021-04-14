@@ -25,7 +25,7 @@ void NaiveBayesApp::draw() {
   ci::gl::drawStringCentered(
       "Press Delete to clear the sketchpad. Press Enter to make a prediction.",
       glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("black"),
-      ci::Font("Arial", 40)); // TODO: remove these magic strings
+      ci::Font("Arial", 40));
 
   ci::gl::drawStringCentered(
       "Prediction: " + std::to_string(current_prediction_),
@@ -58,7 +58,7 @@ void NaiveBayesApp::LoadModelFeatures() {
     input_file >> model_;
   } else {
     throw std::invalid_argument("Cannot open file to load model with "
-        "feature probabilities!"); // TODO: change exception type
+        "feature probabilities!");
   }
 }
 

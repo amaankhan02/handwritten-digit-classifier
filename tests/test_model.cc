@@ -65,7 +65,7 @@ TEST_CASE("Test saving: << operator") {
     model.Train({img1, img2, img3}, {1, 0, 2});
     string save_path =
         R"(C:\Users\amaan\CppLibraries\Cinder\my-projects\naive-bayes\tests\model_saves_test\testmodelsave1.txt)";
-    std::ofstream output_file(save_path);  // TODO: make this a relative path
+    std::ofstream output_file(save_path);
     if (output_file.is_open()) {
       output_file << model;  // save model to file
     }
@@ -103,7 +103,7 @@ TEST_CASE("Test saving: << operator") {
     model.Train({}, {});
     string save_path =
         R"(C:\Users\amaan\CppLibraries\Cinder\my-projects\naive-bayes\tests\model_saves_test\testmodelsave2.txt)";
-    std::ofstream output_file(save_path);  // TODO: make this a relative path
+    std::ofstream output_file(save_path);
     if (output_file.is_open()) {
       output_file << model;  // save model to file
     }
@@ -124,14 +124,9 @@ TEST_CASE("Test saving: << operator") {
   }
 }
 
-TEST_CASE("Test loading: >> operator") {  // TODO: should i test with different
-                                          // size images
-  // TODO: check what happens when you load in a file with incorrect dim
-  // load file into model and eval the probabilities by getting it as vec
-
+TEST_CASE("Test loading: >> operator") {
   SECTION("Load file with ZERO label types. (i.e. no probabilities)") {
     Model model = Model(2, 2, {}, 1);
-    // TODO: make this a relative path
     std::string path =
         R"(C:\Users\amaan\CppLibraries\Cinder\my-projects\naive-bayes\tests\model_loads_test\testmodelload2.txt)";
     std::ifstream input_file(path);
@@ -146,7 +141,6 @@ TEST_CASE("Test loading: >> operator") {  // TODO: should i test with different
 
   SECTION("Load file with THREE label types saved") {
     Model model = Model(2, 2, {0, 1, 2}, 1);
-    // TODO: make this a relative path
     std::string path =
         R"(C:\Users\amaan\CppLibraries\Cinder\my-projects\naive-bayes\tests\model_loads_test\testmodelload1.txt)";
     std::ifstream input_file(path);
