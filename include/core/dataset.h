@@ -41,10 +41,10 @@ class Dataset {
   const std::vector<int>& GetLabels();
 
  private:
-  size_t _input_height;
-  size_t _input_width;
-  std::vector<Image> _images;
-  std::vector<int> _labels;
+  size_t input_height_;
+  size_t input_width_;
+  std::vector<Image> images_;
+  std::vector<int> labels_;
 
   /**
    * Parses the char value into a Pixel.

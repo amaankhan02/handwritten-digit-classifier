@@ -12,49 +12,49 @@ namespace naivebayes {
 namespace core {
 
 Image::Image(size_t height, size_t width, Pixel default_pixel) {
-  _height = height;
-  _width = width;
-  _image = vector<vector<Pixel>>(height);
+  height_ = height;
+  width_ = width;
+  image_ = vector<vector<Pixel>>(height);
   default_pixel_ = default_pixel;
 
   // construct a blank image with all default pixels
   for (size_t row = 0; row < height; row++) {
     for (size_t column = 0; column < width; column++) {
-      _image[row].push_back(default_pixel);
+      image_[row].push_back(default_pixel);
     }
   }
 }
 
 Image::Image(std::vector<std::vector<Pixel>>& image_vector, Pixel default_pixel) {
-  _image = image_vector;
-  _height = _image.size();
-  _width = _image[0].size();
+  image_ = image_vector;
+  height_ = image_.size();
+  width_ = image_[0].size();
   default_pixel_ = default_pixel;
 }
 
 size_t Image::GetHeight() {
-  return _height;
+  return height_;
 }
 size_t Image::GetWidth() {
-  return _width;
+  return width_;
 }
 const Pixel& Image::GetPixel(size_t row, size_t column) const {
-  return _image[row][column];
+  return image_[row][column];
 }
 bool Image::SetPixel(const Pixel& new_pixel, size_t row, size_t column) {
-  if (row < _height && column < _width) {  // check if valid indices
-    _image[row][column] = new_pixel;
+  if (row < height_ && column < width_) {  // check if valid indices
+    image_[row][column] = new_pixel;
     return true;
   }
   return false;
 }
 const std::vector<std::vector<Pixel>>& Image::GetImageAsVector() {
-  return _image;
+  return image_;
 }
 void Image::Clear() {
-  for (size_t row = 0; row < _height; row++) {
-    for (size_t column = 0; column < _width; column++) {
-      _image[row][column] = default_pixel_;
+  for (size_t row = 0; row < height_; row++) {
+    for (size_t column = 0; column < width_; column++) {
+      image_[row][column] = default_pixel_;
     }
   }
 }

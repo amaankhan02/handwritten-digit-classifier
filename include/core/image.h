@@ -51,9 +51,9 @@ class Image {
   void Clear();
 
  private:
-  std::vector<std::vector<Pixel>> _image;
-  size_t _height;
-  size_t _width;
+  std::vector<std::vector<Pixel>> image_;
+  size_t height_;
+  size_t width_;
   Pixel default_pixel_;
 
 };

@@ -16,12 +16,12 @@ namespace core {
 
 Model::Model(size_t input_dim_width, size_t input_dim_height,
              vector<int> label_types, float laplace_smoothing_constant) {
-  _laplace_smooth_constant = laplace_smoothing_constant;
-  _labels = vector<int>();  // init to empty vector
-  _label_types = label_types;
-  _imgs = vector<Image>();  // init to empty vector
-  _input_dim_width = input_dim_width;
-  _input_dim_height = input_dim_height;
+  laplace_smooth_constant_ = laplace_smoothing_constant;
+  labels_ = vector<int>();  // init to empty vector
+  label_types_ = label_types;
+  imgs_ = vector<Image>();  // init to empty vector
+  input_dim_width_ = input_dim_width;
+  input_dim_height_ = input_dim_height;
 
   InitializePriorProbilities();
   InitializeFeatureProbabilities();
@@ -31,28 +31,28 @@ void Model::Train(std::vector<Image> images, std::vector<int> labels) {
   if (images.size() != labels.size()) {
     throw std::invalid_argument("Invalid data: sizes do not match");
   }
-  _imgs = images;
-  _labels = labels;
+  imgs_ = images;
+  labels_ = labels;
 
   CalculatePriorProbabilities();
   CalculateFeatureProbabilities();
 }
 
 int Model::Predict(Image input_img) {
-  if (input_img.GetHeight() != _input_dim_height ||
-      input_img.GetWidth() != _input_dim_width) {
+  if (input_img.GetHeight() != input_dim_height_ ||
+      input_img.GetWidth() != input_dim_width_) {
     throw std::invalid_argument("Invalid image dimensions");
   }
-  vector<float> likelihood_scores(_label_types.size());
+  vector<float> likelihood_scores(label_types_.size());
 
-  for (auto class_label : _label_types) {
-    likelihood_scores[class_label] = log(_prior_probs[class_label]);
+  for (auto class_label : label_types_) {
+    likelihood_scores[class_label] = log(prior_probs_[class_label]);
     for (size_t row = 0; row < input_img.GetHeight(); row++) {
       for (size_t column = 0; column < input_img.GetWidth(); column++) {
         // get type of pixel (i.e. black or white) and its respective index
         size_t shaded_index = kPixelTypes.at(input_img.GetPixel(row, column));
         likelihood_scores[class_label] +=
-            log(_feature_probs[class_label][row][column][shaded_index]);
+            log(feature_probs_[class_label][row][column][shaded_index]);
       }
     }
   }
@@ -84,19 +84,19 @@ float Model::ComputeAccuracy(std::vector<Image> images,
 // save model
 std::ostream& operator<<(std::ostream& os, const Model& model) {
   // store prior probabilties
-  for (auto prob : model._prior_probs) {
+  for (auto prob : model.prior_probs_) {
     os << prob << std::endl;
   }
 
   os << model.kPriorAndFeatureProbDelimiter << std::endl;;
 
   // store feature probabilities
-  for (auto label : model._label_types) {
-    for (size_t row = 0; row < model._input_dim_height; row++) {
-      for (size_t column = 0; column < model._input_dim_width; column++) {
+  for (auto label : model.label_types_) {
+    for (size_t row = 0; row < model.input_dim_height_; row++) {
+      for (size_t column = 0; column < model.input_dim_width_; column++) {
         for (size_t pixel_type_i = 0; pixel_type_i < model.kPixelTypes.size();
              pixel_type_i++) {
-          float value = model._feature_probs[label][row][column][pixel_type_i];
+          float value = model.feature_probs_[label][row][column][pixel_type_i];
           if (pixel_type_i <
               model.kPixelTypes.size() - 1) {  // if not the last pixel type
             os << value << model.kPixelTypeProbDelimiter;
@@ -123,12 +123,12 @@ std::istream& operator>>(std::istream& is, Model& model) {
 }
 
 void Model::CalculatePriorProbabilities() {
-  for (int label_type : _label_types) {
-    float numerator = _laplace_smooth_constant +
-                      std::count(_labels.begin(), _labels.end(), label_type);
+  for (int label_type : label_types_) {
+    float numerator = laplace_smooth_constant_ +
+                      std::count(labels_.begin(), labels_.end(), label_type);
     float denominator =
-        _label_types.size() * _laplace_smooth_constant + _labels.size();
-    _prior_probs[label_type] = numerator / denominator;
+        label_types_.size() * laplace_smooth_constant_ + labels_.size();
+    prior_probs_[label_type] = numerator / denominator;
   }
 }
 
@@ -137,9 +137,9 @@ size_t Model::GetCountForFeatures(int label, Pixel shade, size_t row,
   size_t count = 0;
 
   // data_i = index for the current image label pair
-  for (size_t data_i = 0; data_i < _imgs.size(); data_i++) {
-    if (_imgs[data_i].GetPixel(row, column) == shade &&
-        _labels[data_i] == label) {
+  for (size_t data_i = 0; data_i < imgs_.size(); data_i++) {
+    if (imgs_[data_i].GetPixel(row, column) == shade &&
+        labels_[data_i] == label) {
       count++;
     }
   }
@@ -150,19 +150,19 @@ size_t Model::GetCountForFeatures(int label, Pixel shade, size_t row,
 void Model::CalculateFeatureProbabilities() {
   size_t num_shades = kPixelTypes.size();
   // calculate feature probabilities
-  for (int label_type : _label_types) {
-    for (size_t row = 0; row < _input_dim_height; row++) {
-      for (size_t column = 0; column < _input_dim_width; column++) {
+  for (int label_type : label_types_) {
+    for (size_t row = 0; row < input_dim_height_; row++) {
+      for (size_t column = 0; column < input_dim_width_; column++) {
         for (const auto& pixel : kPixelTypes) {
           size_t pixel_index = pixel.second;  // returns value in key-value pair
           float numerator =
-              _laplace_smooth_constant +
+              laplace_smooth_constant_ +
               GetCountForFeatures(label_type, pixel.first, row, column);
           float denominator =
-              num_shades * _laplace_smooth_constant +
-              std::count(_labels.begin(), _labels.end(), label_type);
+              num_shades * laplace_smooth_constant_ +
+              std::count(labels_.begin(), labels_.end(), label_type);
 
-          _feature_probs[label_type][row][column][pixel_index] =
+          feature_probs_[label_type][row][column][pixel_index] =
               (numerator / denominator);
         }
       }
@@ -182,18 +182,18 @@ void Model::SplitString(const string& str, const char delim,
 }
 
 void Model::InitializeFeatureProbabilities() {
-  _feature_probs = vector<vector<vector<vector<float>>>>();
+  feature_probs_ = vector<vector<vector<vector<float>>>>();
 
   // resize 4d vector to correct dimensions
-  for (size_t label_i = 0; label_i < _label_types.size(); label_i++) {
-    _feature_probs.emplace_back();
-    for (size_t row = 0; row < _input_dim_height; row++) {
-      _feature_probs[label_i].emplace_back();
-      for (size_t col = 0; col < _input_dim_width; col++) {
-        _feature_probs[label_i][row].emplace_back();
+  for (size_t label_i = 0; label_i < label_types_.size(); label_i++) {
+    feature_probs_.emplace_back();
+    for (size_t row = 0; row < input_dim_height_; row++) {
+      feature_probs_[label_i].emplace_back();
+      for (size_t col = 0; col < input_dim_width_; col++) {
+        feature_probs_[label_i][row].emplace_back();
         for (size_t pixel_shade = 0; pixel_shade < kPixelTypes.size();
              pixel_shade++) {
-          _feature_probs[label_i][row][col].emplace_back();
+          feature_probs_[label_i][row][col].emplace_back();
         }
       }
     }
@@ -202,11 +202,11 @@ void Model::InitializeFeatureProbabilities() {
 
 const std::vector<std::vector<std::vector<std::vector<float>>>>&
 Model::GetFeatureProbabilities() {
-  return _feature_probs;
+  return feature_probs_;
 }
 
 const std::vector<float>& Model::GetPriorProbabilities() {
-  return _prior_probs;
+  return prior_probs_;
 }
 
 int Model::GetMaxIndex(std::vector<float> vec) {
@@ -221,7 +221,7 @@ int Model::GetMaxIndex(std::vector<float> vec) {
 }
 
 void Model::InitializePriorProbilities() {
-  _prior_probs = vector<float>(_label_types.size(), 0.0f);  // init with 0s
+  prior_probs_ = vector<float>(label_types_.size(), 0.0f);  // init with 0s
 }
 void Model::SavePriorProbilities(std::ostream& output_stream) {
 
@@ -232,7 +232,7 @@ void Model::LoadPriorProbilities(std::istream& in_stream, Model& model, std::str
     if (line.length() == 1 && line[0] == model.kPriorAndFeatureProbDelimiter) {
       break;
     }
-    model._prior_probs[prior_prob_index] = std::stof(line);
+    model.prior_probs_[prior_prob_index] = std::stof(line);
     prior_prob_index++;
   }
 }
@@ -259,7 +259,7 @@ void Model::LoadFeatureProbilities(std::istream& in_stream, Model& model,
       size_t pixel_shade_i = 0;
       for (string prob_string : shade_probabilities) {
         float prob_float = std::stof(prob_string);
-        model._feature_probs[label_type][row][column][pixel_shade_i] =
+        model.feature_probs_[label_type][row][column][pixel_shade_i] =
             prob_float;
         pixel_shade_i++;
       }
