@@ -1,13 +1,19 @@
 #include <visualizer/naive_bayes_app.h>
 
+using naivebayes::core::Model;
 namespace naivebayes {
 
 namespace visualizer {
 
 NaiveBayesApp::NaiveBayesApp()
     : sketchpad_(glm::vec2(kMargin, kMargin), kImageDimension,
-                 kWindowSize - 2 * kMargin) {
+                 kWindowSize - 2 * kMargin),
+      model_(kImageDimension, kImageDimension, kClassLabels, kLaplaceSmoothingConstant)
+{
   ci::app::setWindowSize((int) kWindowSize, (int) kWindowSize);
+  sketchpad_ = Sketchpad(glm::vec2(kMargin, kMargin), kImageDimension,
+                          kWindowSize - 2 * kMargin);
+  LoadModelFeatures();
 }
 
 void NaiveBayesApp::draw() {
@@ -18,11 +24,13 @@ void NaiveBayesApp::draw() {
 
   ci::gl::drawStringCentered(
       "Press Delete to clear the sketchpad. Press Enter to make a prediction.",
-      glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("black"));
+      glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("black"),
+      ci::Font("Arial", 40));
 
   ci::gl::drawStringCentered(
       "Prediction: " + std::to_string(current_prediction_),
-      glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("blue"));
+      glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("blue"),
+      ci::Font("Arial", 70));
 }
 
 void NaiveBayesApp::mouseDown(ci::app::MouseEvent event) {
@@ -36,13 +44,21 @@ void NaiveBayesApp::mouseDrag(ci::app::MouseEvent event) {
 void NaiveBayesApp::keyDown(ci::app::KeyEvent event) {
   switch (event.getCode()) {
     case ci::app::KeyEvent::KEY_RETURN:
-      // ask your classifier to classify the image that's currently drawn on the
-      // sketchpad and update current_prediction_
+      current_prediction_  = model_.Predict(sketchpad_.GetSketchpadAsImage());
       break;
 
     case ci::app::KeyEvent::KEY_DELETE:
       sketchpad_.Clear();
       break;
+  }
+}
+void NaiveBayesApp::LoadModelFeatures() {
+  std::ifstream input_file(kModelFeaturesFile);
+  if (input_file.is_open()) {
+    input_file >> model_;
+  } else {
+    throw std::invalid_argument("Cannot open file to load model with "
+        "feature probabilities!");
   }
 }
 

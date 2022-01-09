@@ -29,10 +29,24 @@ class Model {
   /**
    * Train Naive Bayes Model on the training data provided. Calculate
    * the feature and prior probabilities for the model.
-   * @param imgs    training images (inputs)
+   * @param images  training images (inputs)
    * @param labels  training labels (outputs)
    */
-  void Train(std::vector<Image> imgs, std::vector<int> labels);
+  void Train(std::vector<Image> images, std::vector<int> labels);
+
+  /**
+   * Model predicts on all the images passed in and computes the accuracy by
+   * calculating the ratio of the number of correct predictions over the
+   * number of total predictions.
+   *
+   * @param images          vector of images to predict on and compute accuracy
+   *                        of
+   * @param correct_labels  the correct labels corresponding to the the vector
+   *                        of input images
+   * @return
+   */
+  float ComputeAccuracy(std::vector<Image> images,
+                        std::vector<int> correct_labels);
 
   /**
    * Given an image, model predicts/classifies what the output
@@ -44,8 +58,6 @@ class Model {
    */
   int Predict(Image input_img);
 
-  float ComputeAccuracy(std::vector<Image> images, std::vector<int> correct_labels);
-
   /**
    * Save model probabilities to stream
    * @param os output stream
@@ -53,6 +65,7 @@ class Model {
    * @return ostream
    */
   friend std::ostream &operator<<(std::ostream &os, const Model &model);
+
   /**
    * Load model probabibilites from file to Model object
    * @param is      input stream
@@ -64,11 +77,15 @@ class Model {
   /**
    * Get feature probabilities.
    * The vector dimensionality has [label_type, row, col, pixel_shade]
-   * @return
+   * @return    feature probabilities
    */
   const std::vector<std::vector<std::vector<std::vector<float>>>>
       &GetFeatureProbabilities();
 
+  /**
+   * Get prior probabilities
+   * @return prior probabiltiies
+   */
   const std::vector<float> &GetPriorProbabilities();
 
  private:
@@ -89,21 +106,25 @@ class Model {
   /** Splits the prior probabilities and the Feature probabilties **/
   const char kPriorAndFeatureProbDelimiter = '*';
 
-  float _laplace_smooth_constant;
-  std::vector<Image> _imgs;
-  std::vector<int> _labels;
-  std::vector<int> _label_types;
-  size_t _input_dim_width;
-  size_t _input_dim_height;
+  float laplace_smooth_constant_;
+  std::vector<Image> imgs_;
+  std::vector<int> labels_;
+  std::vector<int> label_types_;
+  size_t input_dim_width_;
+  size_t input_dim_height_;
 
   /** dimension types are [label_type, row, col, pixel_type]**/
-  std::vector<std::vector<std::vector<std::vector<float>>>> _feature_probs;
-  std::vector<float> _prior_probs;
+  std::vector<std::vector<std::vector<std::vector<float>>>> feature_probs_;
+  std::vector<float> prior_probs_;
 
   void CalculatePriorProbabilities();
   void CalculateFeatureProbabilities();
   size_t GetCountForFeatures(int label, Pixel shade, size_t row, size_t column);
-  void InitializeFeatureProbs();
+  void InitializeFeatureProbabilities();
+  void InitializePriorProbilities();
+  void LoadPriorProbilities(std::istream& in_stream, Model& model, std::string& line);
+  void LoadFeatureProbilities(std::istream& in_stream, Model& model, std::string& line);
+
 
   /**
    * Split string off delimiter into vector of strings

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "cinder/gl/gl.h"
+#include <core/pixel.h>
+#include <core/image.h>
 
 namespace naivebayes {
 
@@ -49,15 +51,24 @@ class Sketchpad {
    */
   void Clear();
 
+  /**
+   * Get an image representation of the sketchpad canvas
+   * @return    an Image object representing the contents of the sketchpad
+   */
+  const naivebayes::core::Image& GetSketchpadAsImage();
+
  private:
   glm::vec2 top_left_corner_;
-
   size_t num_pixels_per_side_;
+
+  /** Represents the Image that the sketchpad creates to be displayed and
+   * drawn on. An Image object representing the sketchpad drawing **/
+  naivebayes::core::Image sketchpad_image_;
 
   /** Number of screen pixels in the width/height of one sketchpad pixel */
   double pixel_side_length_;
-
   double brush_radius_;
+
 };
 
 }  // namespace visualizer

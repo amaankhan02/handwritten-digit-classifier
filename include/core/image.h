@@ -27,7 +27,7 @@ class Image {
    * Initialize image with existing vector of pixels
    * @param image_vector    vector of pixels representing image
    */
-  Image(std::vector<std::vector<Pixel>> &image_vector);
+  Image(std::vector<std::vector<Pixel>> &image_vector, Pixel default_pixel = kWhite);
 
   size_t GetHeight();
   size_t GetWidth();
@@ -44,10 +44,17 @@ class Image {
    */
   bool SetPixel(const Pixel &new_pixel, size_t row, size_t column);
 
+  /**
+   * Clear the image by setting all pixels to the default pixel that was
+   * assigned during construction of the image
+   */
+  void Clear();
+
  private:
-  std::vector<std::vector<Pixel>> _image;
-  size_t _height;
-  size_t _width;
+  std::vector<std::vector<Pixel>> image_;
+  size_t height_;
+  size_t width_;
+  Pixel default_pixel_;
 
 };
 }  // namespace core

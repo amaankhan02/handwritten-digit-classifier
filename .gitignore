@@ -1,1 +1,4 @@
 /data/
+/tests/test_data/
+/tests/model_saves_test/
+/tests/model_loads_test/
