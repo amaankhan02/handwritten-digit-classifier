@@ -223,9 +223,7 @@ int Model::GetMaxIndex(std::vector<float> vec) {
 void Model::InitializePriorProbilities() {
   prior_probs_ = vector<float>(label_types_.size(), 0.0f);  // init with 0s
 }
-void Model::SavePriorProbilities(std::ostream& output_stream) {
 
-}
 void Model::LoadPriorProbilities(std::istream& in_stream, Model& model, std::string& line) {
   size_t prior_prob_index = 0;
   while (std::getline(in_stream, line)) {

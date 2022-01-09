@@ -60,7 +60,6 @@ class Sketchpad {
  private:
   glm::vec2 top_left_corner_;
   size_t num_pixels_per_side_;
-//  std::vector<std::vector<naivebayes::core::Pixel>> sketchpad_pixels_;
 
   /** Represents the Image that the sketchpad creates to be displayed and
    * drawn on. An Image object representing the sketchpad drawing **/

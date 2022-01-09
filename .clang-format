@@ -1,0 +1,5 @@
+BasedOnStyle: Google
+UseTab: Never
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
